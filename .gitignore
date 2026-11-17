@@ -1,2 +1,28 @@
 .idea/
 app/vendor/
+
+# Local .terraform directories (large provider binaries)
+**/.terraform/*
+
+# State files (contain plain-text secrets & passwords)
+*.tfstate
+*.tfstate.*
+
+# Crash logs & saved plan files
+crash.log
+crash.*.log
+*.tfplan
+
+# Secret variable files
+*.tfvars
+*.tfvars.json
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI configuration files
+.terraformrc
+terraform.rc

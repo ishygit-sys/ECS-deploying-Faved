@@ -45,3 +45,43 @@ resource "aws_iam_role_policy_attachment" "github_deploy_ecr" {
   role       = aws_iam_role.github_deploy.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
 }
+
+
+
+
+# give permission to read the Terraform state file in the S3 bucket
+
+data "aws_iam_policy_document" "terraform_state" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket",
+    ]
+    resources = [
+      "arn:aws:s3:::ecs-project-asdgasd",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:DeleteObject",
+    ]
+    resources = [
+      "arn:aws:s3:::ecs-project-asdgasd/ecs-clickops/terraform.tfstate",
+      "arn:aws:s3:::ecs-project-asdgasd/ecs-clickops/terraform.tfstate.tflock",
+    ]
+  }
+}
+
+resource "aws_iam_policy" "terraform_state" {
+  name   = "terraform-state-access"
+  policy = data.aws_iam_policy_document.terraform_state.json
+}
+
+resource "aws_iam_role_policy_attachment" "terraform_state" {
+  role       = aws_iam_role.github_deploy.name
+  policy_arn = aws_iam_policy.terraform_state.arn
+}

@@ -22,8 +22,9 @@ data "aws_iam_policy_document" "github_trust" {
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values = ["repo:ishygit-sys/ECS-deploying-Faved:ref:refs/heads/main",
-        "repo:ishygit-sys@336461664/ECS-deploying-Faved@1442917443:ref:refs/heads/main"
+      values = [
+        "repo:ishygit-sys/ECS-deploying-Faved:*",
+        "repo:ishygit-sys@336461664/ECS-deploying-Faved@1442917443:*"
       ]
     }
   }

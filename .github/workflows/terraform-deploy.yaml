@@ -1,0 +1,58 @@
+name: Deploy with ECS
+
+on: 
+  workflow_run: 
+    workflows: ["build and push image"]
+    types: 
+     - completed
+    branches:
+      - main
+
+
+permissions:
+  id-token: write
+  contents: read
+
+
+jobs:
+  terraform-deploy:
+    name: terraform apply
+    runs-on: ubuntu-latest
+    # only runs if the previous workflow works
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    defaults:
+      run:
+        working-directory: ./terraform
+
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+
+      - name: configure AWS credential via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::506199645995:role/github-actions-deploy
+          aws-region: eu-west-2 
+
+
+      - name: setting up terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: terraform init
+        run: terraform init
+
+
+      - name: terraform plan
+        env:
+          TF_VAR_image_tag: ${{ github.event.workflow_run.head_sha }}
+        run: terraform plan -out=tfplan -input=false
+
+      - name: terraform apply
+        env:
+          TF_VAR_image_tag: ${{ github.event.workflow_run.head_sha }}
+        run: terraform apply -auto-approve -input=false tfplan

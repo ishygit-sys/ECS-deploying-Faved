@@ -85,3 +85,42 @@ resource "aws_iam_role_policy_attachment" "terraform_state" {
   role       = aws_iam_role.github_deploy.name
   policy_arn = aws_iam_policy.terraform_state.arn
 }
+
+
+
+# Read access for IAM (needed for OIDC provider and policy refresh)
+resource "aws_iam_role_policy_attachment" "github_iam_read" {
+  role       = aws_iam_role.github_deploy.name
+  policy_arn = "arn:aws:iam::aws:policy/IAMReadOnlyAccess"
+}
+
+# Read access for ACM
+resource "aws_iam_role_policy_attachment" "github_acm_read" {
+  role       = aws_iam_role.github_deploy.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSCertificateManagerReadOnly"
+}
+
+# Read access for ELB (ALB/Target Group describe operations)
+resource "aws_iam_role_policy_attachment" "github_elb_read" {
+  role       = aws_iam_role.github_deploy.name
+  policy_arn = "arn:aws:iam::aws:policy/ElasticLoadBalancingReadOnly"
+}
+
+
+data "aws_iam_policy_document" "logs_tags" {
+  statement {
+    effect    = "Allow"
+    actions   = ["logs:ListTagsForResource"]
+    resources = ["*"] # or scope to your log group ARN
+  }
+}
+
+resource "aws_iam_policy" "logs_tags" {
+  name   = "logs-list-tags"
+  policy = data.aws_iam_policy_document.logs_tags.json
+}
+
+resource "aws_iam_role_policy_attachment" "logs_tags" {
+  role       = aws_iam_role.github_deploy.name
+  policy_arn = aws_iam_policy.logs_tags.arn
+}

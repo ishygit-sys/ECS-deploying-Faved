@@ -58,3 +58,10 @@ jobs:
         env:
           TF_VAR_image_tag: ${{ github.event.workflow_run.head_sha }}
         run: terraform apply -auto-approve -input=false tfplan
+
+
+
+      - name: post deploy healthcheck
+        run: |
+          curl --fail --retry 10 --retry-delay 5 --retry-all-errors \
+          https://tm.ishaaqia.co.uk/health

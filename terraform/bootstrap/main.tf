@@ -125,3 +125,39 @@ resource "aws_iam_role_policy_attachment" "logs_tags" {
   role       = aws_iam_role.github_deploy.name
   policy_arn = aws_iam_policy.logs_tags.arn
 }
+
+
+data "aws_iam_policy_document" "destroy_permissions" {
+  statement {
+    effect = "Allow"
+    actions = [
+      # IAM permissions to detach policies from the ECS task role
+      "iam:DetachRolePolicy",
+      "iam:DeleteRolePolicy",
+      "iam:DeleteRole",
+      "iam:ListAttachedRolePolicies",
+
+      # EC2 permissions to delete security group rules and route tables
+      "ec2:RevokeSecurityGroupIngress",
+      "ec2:RevokeSecurityGroupEgress",
+      "ec2:DeleteSecurityGroup",
+      "ec2:DeleteRouteTable",
+      "ec2:DeleteRoute",
+      "ec2:DisassociateRouteTable",
+
+      # CloudWatch Logs permission to delete log groups
+      "logs:DeleteLogGroup",
+    ]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "destroy_permissions" {
+  name   = "github-actions-destroy-permissions"
+  policy = data.aws_iam_policy_document.destroy_permissions.json
+}
+
+resource "aws_iam_role_policy_attachment" "destroy_permissions" {
+  role       = aws_iam_role.github_deploy.name
+  policy_arn = aws_iam_policy.destroy_permissions.arn
+}

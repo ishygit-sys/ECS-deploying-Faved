@@ -2,7 +2,7 @@
 
 ## Architecture Overview
 
-![Architecture Diagram](docs/images/architecture.png)
+![Architecture Diagram](./images/architecture.png)
 
 This project deploys the open-source bookmark manager **Faved** to AWS using a fully automated, containerised, and Infrastructure-as-Code (IaC) approach.
 
@@ -19,7 +19,7 @@ Users resolve the custom domain via Cloudflare DNS, which points to an **Applica
 
 Here is the application running live over HTTPS on the custom domain.
 
-![Application Demo](docs/images/app-demo.png)
+![Application Demo](./images/faved.png)
 
 ## Local Setup
 
@@ -42,6 +42,9 @@ docker run -d -p 8080:8080 --name faved faved-local
 
 ## Project Structure
 
+## Project Structure
+
+```text
 .
 ├── app/                  # Faved application source code
 ├── Dockerfile            # Multi-stage production build
@@ -54,6 +57,7 @@ docker run -d -p 8080:8080 --name faved faved-local
 │   └── terraform-destroy.yml
 └── README.md
 
+
 ## CI/CD Pipelines
 
 The CI/CD is handled via three GitHub Actions workflows using OIDC for short-lived AWS credentials (no static access keys are stored in GitHub).
@@ -62,19 +66,19 @@ The CI/CD is handled via three GitHub Actions workflows using OIDC for short-liv
 
 Triggered on a push to `main`. It builds the Docker image, tags it with the commit SHA, and pushes it to Amazon ECR.
 
-![Build Pipeline](docs/images/build-pipeline.png)
+![Build Pipeline](./images/build-and-deploy.png)
 
 **2. Terraform Deploy Pipeline**
 
 Triggered after a successful build. It runs `terraform apply` in the `infra` directory, passing the commit SHA as the `image_tag` variable to roll out the new ECS task definition.
 
-![Deploy Pipeline](docs/images/deploy-pipeline.png)
+![Deploy Pipeline](./images/terraform-apply.png)
 
 **3. Terraform Destroy Pipeline**
 
 A manual workflow (`workflow_dispatch`) that requires typing "DESTROY" to confirm. It safely tears down the application infrastructure without deleting the CI/CD IAM roles.
 
-![Destroy Pipeline](docs/images/destroy-pipeline.png)
+![Destroy Pipeline](./images/terraform-destroy.png)
 
 ## DNS Configuration (Cloudflare)
 

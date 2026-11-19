@@ -147,6 +147,14 @@ data "aws_iam_policy_document" "destroy_permissions" {
 
       # CloudWatch Logs permission to delete log groups
       "logs:DeleteLogGroup",
+
+
+      # ACM certificate deletion
+      "acm:DeleteCertificate",
+
+      # Internet Gateway deletion
+      "ec2:DeleteInternetGateway",
+      "ec2:DetachInternetGateway",
     ]
     resources = ["*"]
   }

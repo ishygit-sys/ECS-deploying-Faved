@@ -1,6 +1,4 @@
-
-
-
+# Creatimg Ecs cluster 
 resource "aws_ecs_cluster" "cluster" {
   name = "ecs-cluster"
 
@@ -10,11 +8,11 @@ resource "aws_ecs_cluster" "cluster" {
   }
 }
 
+# creating IAM role
 resource "aws_iam_role" "role" {
   name = "ecs_role"
 
-  # Terraform's "jsonencode" function converts a
-  # Terraform expression result to valid JSON syntax.
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -29,18 +27,20 @@ resource "aws_iam_role" "role" {
   })
 }
 
+# Attatching policies to the role
 resource "aws_iam_role_policy_attachment" "role_attatchment" {
   role       = aws_iam_role.role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
 
-
+# Captures and stores container application logs for 7 days for monitoring and debugging
 resource "aws_cloudwatch_log_group" "faved" {
   name              = "/ecs/faved-task"
   retention_in_days = 7
 }
 
+# Defines the Fargate container blueprint (0.5 vCPU, 1 GB RAM), ECR image tag, port 8080 mapping, and CloudWatch logging
 resource "aws_ecs_task_definition" "service" {
   family                   = "ecs-service"
   requires_compatibilities = ["FARGATE"]
@@ -78,7 +78,7 @@ resource "aws_ecs_task_definition" "service" {
 
 
 
-
+# Runs and maintains 1 Fargate container task in the public subnets, registering it with the ALB target group
 resource "aws_ecs_service" "service" {
   name                  = "ecs-service"
   cluster               = aws_ecs_cluster.cluster.id

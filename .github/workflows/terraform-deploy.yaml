@@ -4,12 +4,12 @@ on:
   workflow_run: 
     workflows: ["build and push image"]
     types: 
-     - completed
+     - completed   # workflow runs when previous workflow is finished
     branches:
       - main
 
 
-permissions:
+permissions:            # needed for OIDC
   id-token: write
   contents: read
 
@@ -61,7 +61,7 @@ jobs:
 
 
 
-      - name: post deploy healthcheck
+      - name: post deploy healthcheck       
         run: |
           curl --fail --retry 10 --retry-delay 5 --retry-all-errors \
           https://tm.ishaaqia.co.uk/health

@@ -1,11 +1,11 @@
-
+# Registers Github action as a trusted identity provider in AWS account
 resource "aws_iam_openid_connect_provider" "github" {
   url             = "https://token.actions.githubusercontent.com"
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = ["6938fd4d98bab03faadb97b34396831e3780aea1"]
 }
 
-
+# decides who gets to use this role ( branch/environment)
 data "aws_iam_policy_document" "github_trust" {
   statement {
     effect = "Allow"
@@ -30,12 +30,13 @@ data "aws_iam_policy_document" "github_trust" {
   }
 }
 
+# gives workflow the role
 resource "aws_iam_role" "github_deploy" {
   name               = "github-actions-deploy"
   assume_role_policy = data.aws_iam_policy_document.github_trust.json
 }
 
-
+# permissions that the workflow can have when running
 resource "aws_iam_role_policy_attachment" "github_deploy_ecs" {
   role       = aws_iam_role.github_deploy.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonECS_FullAccess"

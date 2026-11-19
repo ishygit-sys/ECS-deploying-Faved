@@ -1,17 +1,17 @@
 name: build and push image
 
 on: 
-  workflow_dispatch:
+  workflow_dispatch:    # allows running workflow in github for testing purposes
   push:
-    branches:
-      - main
-    paths:
-      - 'app/**'
+    branches:    
+      - main    # pushes on main branch
+    paths:         # only enables workflow when these files are changes ( only the application and focker files)
+      - 'app/**'       
       - 'Dockerfile'
       - '.dockerignore'
 
 
-permissions:
+permissions:      # permission needed for OIDC
   id-token: write
   contents: read
 
@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: repo content
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4   # downloads repo content onto runner
 
 
       - name: configure aws-credential with OIDC

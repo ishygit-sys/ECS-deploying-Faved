@@ -1,3 +1,4 @@
+# Creating Application Load Balancer
 resource "aws_lb" "main" {
   name               = "test-lb-tf"
   internal           = false
@@ -10,7 +11,7 @@ resource "aws_lb" "main" {
 }
 
 
-
+# Creating target group defines where to send ALB traffic to
 resource "aws_lb_target_group" "target-g" {
   name        = "target-g"
   port        = 8080
@@ -20,7 +21,7 @@ resource "aws_lb_target_group" "target-g" {
 
   health_check {
     enabled             = true
-    path                = "/health"
+    path                = "/health" # providing health checks
     protocol            = "HTTP"
     port                = "8080"
     matcher             = "200"
@@ -32,7 +33,7 @@ resource "aws_lb_target_group" "target-g" {
 }
 
 
-
+# Creating HTTP listerns
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.main.arn
   port              = "80"
@@ -42,7 +43,7 @@ resource "aws_lb_listener" "http" {
   default_action {
     type = "redirect"
 
-    redirect {
+    redirect { # redirects HTTP to HTTPS
       port        = "443"
       protocol    = "HTTPS"
       status_code = "HTTP_301"
@@ -51,7 +52,7 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-
+# Traffic from HTTP get redirect here
 resource "aws_lb_listener" "https" {
   load_balancer_arn = aws_lb.main.arn
   port              = "443"
@@ -60,7 +61,7 @@ resource "aws_lb_listener" "https" {
   certificate_arn   = var.cert_arn
 
   default_action {
-    type             = "forward"
+    type             = "forward" # forwards traffic to the target group
     target_group_arn = aws_lb_target_group.target-g.arn
 
 

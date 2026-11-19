@@ -9,6 +9,7 @@ This project deploys the open-source bookmark manager **Faved** to AWS using a f
 The infrastructure is managed by Terraform and consists of two distinct scopes:
 
 1. **The Bootstrap Scope (`/terraform/bootstrap`)**: Manages the GitHub Actions OIDC provider and IAM roles. This is kept separate so the CI/CD pipeline never destroys its own permissions.
+
 2. **The Application Scope (`/terraform/infra`)**: Manages the networking and compute resources.
 
 **Traffic Flow:**
@@ -42,7 +43,6 @@ docker run -d -p 8080:8080 --name faved faved-local
 
 ## Project Structure
 
-## Project Structure
 
 ```text
 .
@@ -56,6 +56,8 @@ docker run -d -p 8080:8080 --name faved faved-local
 │   ├── terraform-deploy.yml
 │   └── terraform-destroy.yml
 └── README.md
+
+```
 
 
 ## CI/CD Pipelines

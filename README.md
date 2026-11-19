@@ -1,4 +1,4 @@
-# Faved on AWS: End-to-End CI/CD Deployment
+# Faved on AWS: End-to-End 
 
 ## Architecture Overview
 

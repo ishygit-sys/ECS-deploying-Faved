@@ -80,11 +80,12 @@ resource "aws_ecs_task_definition" "service" {
 
 
 resource "aws_ecs_service" "service" {
-  name            = "ecs-service"
-  cluster         = aws_ecs_cluster.cluster.id
-  task_definition = aws_ecs_task_definition.service.arn
-  launch_type     = "FARGATE"
-  desired_count   = 1
+  name                  = "ecs-service"
+  cluster               = aws_ecs_cluster.cluster.id
+  task_definition       = aws_ecs_task_definition.service.arn
+  launch_type           = "FARGATE"
+  desired_count         = 1
+  wait_for_steady_state = true
 
 
   load_balancer {

@@ -16,11 +16,11 @@ jobs:
   terraform-destroy:
     name: Terraform Destroy
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.confirm_destroy == 'DESTROY' }}
+    if: ${{ github.event.inputs.confirm_destroy == 'DESTROY' }}   # Only runs if input is DESTROY
 
     defaults:
       run:
-        working-directory: ./terraform
+        working-directory: ./terraform/bootstrap
 
     steps:
       - name: Checkout code
